@@ -32,7 +32,7 @@ i = 0
 while not won:
     column = -1
     while not g.column_exists(column) or g.is_column_full(column):
-        column = input(f"{players[i].name}'s turn. Pick a number:\n")
+        column = int(input(f"{players[i].name}'s turn. Pick a column number:\n"))
     g.add_piece(players[i], column)
     print(htmlize(g.grid))
     i += 1
