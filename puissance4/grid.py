@@ -88,10 +88,7 @@ class Grid:
             return len(set(portion)) == 1
 
         def set_winner(cell):
-            if cell == Color.RED.value:
-                self.winner = Color.RED
-            else:
-                self.winner = Color.YELLOW
+            self.winner = Color(cell)
 
         row_max, col_max = np.shape(self.grid)
 
@@ -99,7 +96,7 @@ class Grid:
             for col in range(col_max):
                 cell = self.grid[row][col]
                 # if the cell is empty, there is no chance another cell is not empty in the column
-                if cell == Color.WHITE.value:
+                if Color(cell) == Color.WHITE:
                     continue
                 # check it's a win in the row
                 if col <= col_max - self.align and row_win(row, col):
