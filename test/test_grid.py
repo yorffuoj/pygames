@@ -65,9 +65,23 @@ def test_init_set_align_lower():
         Grid(align=1)
 
 
+def test_column_exists():
+    g = Grid()
+    assert not g.column_exists(-1)
+    assert g.column_exists(0)
+    assert g.column_exists(1)
+    assert g.column_exists(2)
+    assert g.column_exists(3)
+    assert g.column_exists(4)
+    assert g.column_exists(5)
+    assert g.column_exists(6)
+    assert not g.column_exists(7)
+
+
 def test_add_piece_yellow():
     g = Grid()
-    g.add_piece(Color.YELLOW, 2), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.YELLOW, 2) == (0, 2), "it should be possible to add a piece in this column as it is not " \
+                                                   "full "
     expected_grid = [[0, 0, 1, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0],
@@ -79,7 +93,7 @@ def test_add_piece_yellow():
 
 def test_add_piece_red():
     g = Grid()
-    assert g.add_piece(Color.RED, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.RED, 4) == (0, 4), "it should be possible to add a piece in this column as it is not full"
     expected_grid = [[0, 0, 0, 0, 2, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0],
@@ -91,8 +105,9 @@ def test_add_piece_red():
 
 def test_add_piece_2_pieces_different_columns():
     g = Grid()
-    assert g.add_piece(Color.RED, 4), "it should be possible to add a piece in this column as it is not full"
-    assert g.add_piece(Color.YELLOW, 5), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.RED, 4) == (0, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.YELLOW, 5) == (0, 5), "it should be possible to add a piece in this column as it is not " \
+                                                   "full "
     expected_grid = [[0, 0, 0, 0, 2, 1, 0],
                      [0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0],
@@ -104,8 +119,9 @@ def test_add_piece_2_pieces_different_columns():
 
 def test_add_piece_2_pieces_same_column():
     g = Grid()
-    assert g.add_piece(Color.RED, 4), "it should be possible to add a piece in this column as it is not full"
-    assert g.add_piece(Color.YELLOW, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.RED, 4) == (0, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.YELLOW, 4) == (1, 4), "it should be possible to add a piece in this column as it is not " \
+                                                   "full "
     expected_grid = [[0, 0, 0, 0, 2, 0, 0],
                      [0, 0, 0, 0, 1, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0],
@@ -117,12 +133,15 @@ def test_add_piece_2_pieces_same_column():
 
 def test_add_piece_2_pieces_fill_column():
     g = Grid()
-    assert g.add_piece(Color.RED, 4), "it should be possible to add a piece in this column as it is not full"
-    assert g.add_piece(Color.YELLOW, 4), "it should be possible to add a piece in this column as it is not full"
-    assert g.add_piece(Color.RED, 4), "it should be possible to add a piece in this column as it is not full"
-    assert g.add_piece(Color.YELLOW, 4), "it should be possible to add a piece in this column as it is not full"
-    assert g.add_piece(Color.RED, 4), "it should be possible to add a piece in this column as it is not full"
-    assert g.add_piece(Color.YELLOW, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.RED, 4) == (0, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.YELLOW, 4) == (1, 4), "it should be possible to add a piece in this column as it is not " \
+                                                   "full "
+    assert g.add_piece(Color.RED, 4) == (2, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.YELLOW, 4) == (3, 4), "it should be possible to add a piece in this column as it is not " \
+                                                   "full "
+    assert g.add_piece(Color.RED, 4) == (4, 4), "it should be possible to add a piece in this column as it is not full"
+    assert g.add_piece(Color.YELLOW, 4) == (5, 4), "it should be possible to add a piece in this column as it is not " \
+                                                   "full "
     expected_grid = [[0, 0, 0, 0, 2, 0, 0],
                      [0, 0, 0, 0, 1, 0, 0],
                      [0, 0, 0, 0, 2, 0, 0],
@@ -197,7 +216,7 @@ def test_winner_empty_no_win():
              [0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
-    assert not g.won()
+    assert not g.winner_present()
 
 
 def test_winner_not_enough_no_win():
@@ -209,7 +228,7 @@ def test_winner_not_enough_no_win():
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
     assert np.all(array == g.grid)
-    assert not g.won()
+    assert not g.winner_present()
 
 
 def test_winner_row_left_win():
@@ -220,7 +239,8 @@ def test_winner_row_left_win():
              [0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
-    assert g.won() == Color.YELLOW
+    assert g.winner_present()
+    assert g.winner == Color.YELLOW
 
 
 def test_winner_row_right_win():
@@ -231,7 +251,8 @@ def test_winner_row_right_win():
              [0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
-    assert g.won() == Color.RED
+    assert g.winner_present()
+    assert g.winner == Color.RED
 
 
 def test_winner_col_upper_win():
@@ -242,7 +263,8 @@ def test_winner_col_upper_win():
              [0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
-    assert g.won() == Color.RED
+    assert g.winner_present()
+    assert g.winner == Color.RED
 
 
 def test_winner_col_lower_win():
@@ -253,7 +275,8 @@ def test_winner_col_lower_win():
              [0, 0, 0, 0, 0, 0, 1],
              [0, 0, 0, 0, 0, 0, 1], ]
     g = create_grid(array)
-    assert g.won() == Color.YELLOW
+    assert g.winner_present()
+    assert g.winner == Color.YELLOW
 
 
 def test_winner_upper_diag_win():
@@ -264,7 +287,8 @@ def test_winner_upper_diag_win():
              [0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
-    assert g.won() == Color.RED
+    assert g.winner_present()
+    assert g.winner == Color.RED
 
 
 def test_winner_upper_diag_upper_right_win():
@@ -275,7 +299,8 @@ def test_winner_upper_diag_upper_right_win():
              [0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
-    assert g.won() == Color.RED
+    assert g.winner_present()
+    assert g.winner == Color.RED
 
 
 def test_won_lower_diag_upper_left_win():
@@ -286,7 +311,8 @@ def test_won_lower_diag_upper_left_win():
              [0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0], ]
     g = create_grid(array)
-    assert g.won() == Color.YELLOW
+    assert g.winner_present()
+    assert g.winner == Color.YELLOW
 
 
 if __name__ == "__main__":

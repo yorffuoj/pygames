@@ -1,5 +1,6 @@
 from puissance4.color import Color
 from puissance4.grid import Grid
+import time
 
 
 def htmlize(array):
@@ -10,6 +11,7 @@ def htmlize(array):
             s.append('▓▓' if cell == 1 else '░░' if cell == 2 else '  ')
             s.append('|')
         s.append('\n')
+    s.extend(["  0  1  2  3  4  5  6 \n"])
     return ''.join(s)
 
 
@@ -26,10 +28,10 @@ else:
     second = Color.YELLOW
 
 g = Grid()
-won = g.won()
+won = g.winner_present()
 players = [first, second]
 i = 0
-while not won:
+while not g.winner:
     column = -1
     while not g.column_exists(column) or g.is_column_full(column):
         column = int(input(f"{players[i].name}'s turn. Pick a column number:\n"))
@@ -37,4 +39,4 @@ while not won:
     print(htmlize(g.grid))
     i += 1
     i = i % 2
-    won = g.won()
+print(f"And the winneeeeeeeeeeeeeer is {g.winner.name}")

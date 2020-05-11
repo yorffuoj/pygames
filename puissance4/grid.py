@@ -23,7 +23,7 @@ class Grid:
 
         self.align = align
         self.grid = np.zeros(dtype=np.int8, shape=(nb_row, nb_col))
-
+        self.winner = False
 
     def column_exists(self, col_index):
         """
@@ -32,8 +32,7 @@ class Grid:
             :return: True if the column exists, False otherwise
         """
         col_max = np.shape(self.grid)[1]
-        return 0 <= col_index <= col_max-1
-
+        return 0 <= col_index <= col_max - 1
 
     def is_column_full(self, col_index):
         """
@@ -51,7 +50,7 @@ class Grid:
             The piece is et in the first empty cell in the grid is set to the specified color.
             :param color: the piece color
             :param col_index: the column index
-            :return: True if an empty cell was found in the column, False otherwise
+            :return: False if no empty cell was found in the column, otherwise the coordinates of the filled cell
         """
         assert color == Color.YELLOW or color == Color.RED, "Acceptable colors are yellow and red"
         assert self.column_exists(col_index), "The column does not exist"
@@ -63,29 +62,36 @@ class Grid:
         for i in range(col_max):
             if self.grid[i][col_index] == Color.WHITE.value:
                 self.grid[i][col_index] = color.value
-                return True
+                self.winner_present()
+                return i, col_index
 
-    def won(self):
+    def winner_present(self):
         """
-        Determines if there is a winner for the grid
-        :return: The winners name if there is any, False otherwise
+            Determines if there is a winner for the grid
+            :return: The winners name if there is any, False otherwise
         """
 
         def row_win(row, col):
-            portion = self.grid[row, col:col+self.align]
+            portion = self.grid[row, col:col + self.align]
             return len(set(portion)) == 1
 
         def col_win(row, col):
-            portion = self.grid[row:row+self.align, col]
+            portion = self.grid[row:row + self.align, col]
             return len(set(portion)) == 1
 
         def upper_diag_win(row, col):
-            portion = [self.grid[row+i][col+i] for i in range(self.align)]
+            portion = [self.grid[row + i][col + i] for i in range(self.align)]
             return len(set(portion)) == 1
 
         def lower_diag_win(row, col):
-            portion = [self.grid[row-i][col+i] for i in range(self.align)]
+            portion = [self.grid[row - i][col + i] for i in range(self.align)]
             return len(set(portion)) == 1
+
+        def set_winner(cell):
+            if cell == Color.RED.value:
+                self.winner = Color.RED
+            else:
+                self.winner = Color.YELLOW
 
         row_max, col_max = np.shape(self.grid)
 
@@ -97,19 +103,23 @@ class Grid:
                     continue
                 # check it's a win in the row
                 if col <= col_max - self.align and row_win(row, col):
-                    return cell
+                    set_winner(cell)
+                    return True
                 # check if it's a win in the upper diagonal
-                if row <= row_max - self.align\
-                        and col <= col_max - self.align\
+                if row <= row_max - self.align \
+                        and col <= col_max - self.align \
                         and upper_diag_win(row, col):
-                    return cell
+                    set_winner(cell)
+                    return True
                 # check if it's a win in the column
                 if row <= row_max - self.align and col_win(row, col):
-                    return cell
+                    set_winner(cell)
+                    return True
                 # check if it's a win the lower diagonal
-                if col <= col_max - self.align\
-                        and row >= row_max - self.align\
+                if col <= col_max - self.align \
+                        and row >= row_max - self.align \
                         and lower_diag_win(row, col):
-                    return cell
+                    set_winner(cell)
+                    return True
         # in case there is no enough pieces in ar row, return False
         return False
